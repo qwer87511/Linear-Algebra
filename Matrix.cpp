@@ -1,97 +1,192 @@
 #include "Matrix.h"
 #include <iostream>
 #include <iomanip>
-using std::cout;
-using std::cin;
-using std::endl;
-using std::setw;
-uint16_t l;
-Matrix::Matrix()
+#include <string>
+using namespace std;
+
+Matrix::Matrix(const int& column, const int& row) : column(column), row(row)
 {
+    this->Malloc(column, row);
+    this->SetDiagonalMatrix(0);
 }
-Matrix Matrix::operator+(const Matrix& right)
+Matrix::Matrix(const Matrix& rhs) : column(rhs.column), row(rhs.row)
 {
-    Matrix newMatrix;
-
-    for (int i = 0; i < COLUMN; ++i)
-    {
-        for (int j = 0; j < ROW; ++j)
-        {
-            newMatrix._matrix[i][j] = this->_matrix[i][j] + right._matrix[i][j];
-        }
-    }
-
-    return newMatrix;
+    this->Malloc(column, row);
+    this->Copy(rhs);
 }
-Matrix Matrix::operator*(const Matrix& right)
+Matrix::~Matrix()
 {
-    Matrix resultMatrix;
+    this->Clear();
+}
+void Matrix::Malloc(int column, int row)
+{
+    this->data = new Fraction*[column];
 
-    for (int i = 0; i < COLUMN; ++i)
+    for (int i = 0; i < column; ++i)
     {
-        for (int j = 0; j < ROW; ++j)
-        {
-            //resultMatrix._matrix[i][j] = this->_matrix[][] + right._matrix[][];
-        }
+        this->data[i] = new Fraction[row];
     }
 }
-void Matrix::GetMatrix()
+void Matrix::Copy(const Matrix& rhs)
 {
-    for (int i = 0; i < COLUMN; ++i)
+    for (int i = 0; i < column; ++i)
     {
-        for (int j = 0; j < ROW; ++j)
+        for (int j = 0; j < row; ++j)
         {
-            cin >> this->_matrix[i][j];
+            this->data[i][j] = rhs.data[i][j];
         }
     }
 }
-void Matrix::Show()
+void Matrix::Reset(int column, int row)
 {
-    for (int i = 0; i < COLUMN; ++i)
+    this->Clear();
+    this->column = column;
+    this->row = row;
+    this->Malloc(column, row);
+    this->SetDiagonalMatrix(0);
+}
+void Matrix::SetDiagonalMatrix(const int& num)
+{
+    for (int i = 0; i < column; ++i)
     {
-        for (int j = 0; j < ROW; ++j)
+        for (int j = 0; j < row; ++j)
         {
-            cout << setw(3) << this->_matrix[i][j];
+            if (i == j) this->data[i][j] = num;
+            else this->data[i][j] = 0;
         }
-
-        cout << endl;
     }
 }
-void Matrix::GaussianElimination()
+void Matrix::Clear()
 {
-    for (int i = 0; i < COLUMN; ++i)
+    for (int i = 0; i < column; ++i)
     {
-        int pivot = this->_matrix[i][i];
+        delete[] data[i];
+    }
 
-        for (int j = i + 1; j < COLUMN; ++j)
+    delete[] data;
+}
+Matrix& Matrix::operator=(const Matrix& rhs)
+{
+    if (this->column != rhs.column || this->row != rhs.row)
+        this->Reset(column, row);
+
+    this->Copy(rhs);
+    return *this;
+}
+istream& operator >> (istream& in, Matrix& m)
+{
+    for (int i = 0; i < m.column; ++i)
+    {
+        for (int j = 0; j < m.row; ++j)
         {
-            int multiple = -this->_matrix[j][i] / pivot;
+            cin >> m.data[i][j];
+        }
+    }
 
-            for (int k = i; k < ROW; ++k)
+    return in;
+}
+ostream& operator << (ostream& out, const Matrix& m)
+{
+    for (int i = 0; i < m.column; ++i)
+    {
+        cout << '|';
+
+        for (int j = 0; j < m.row; ++j)
+        {
+            cout << setw(3) << m.data[i][j];
+        }
+
+        cout << setw(3) << '|' << endl;
+    }
+
+    return out;
+}
+Matrix Matrix::operator-() const
+{
+    return Matrix(*this) *= -1;
+}
+Matrix& operator+=(Matrix& lhs, const Matrix& rhs)
+{
+    if (lhs.column != rhs.column || lhs.row != rhs.row) throw Matrix::DIFFERENT_SIZE;
+
+    for (int i = 0; i < lhs.column; ++i)
+    {
+        for (int j = 0; j < lhs.row; ++j)
+        {
+            lhs.data[i][j] = lhs.data[i][j] + rhs.data[i][j];
+        }
+    }
+
+    return lhs;
+}
+Matrix operator+(const Matrix& lhs, const Matrix& rhs)
+{
+    return Matrix(lhs) += rhs;
+}
+Matrix& operator-=(Matrix& lhs, const Matrix& rhs)
+{
+    return lhs += -rhs;
+}
+Matrix operator-(const Matrix& lhs, const Matrix& rhs)
+{
+    return Matrix(lhs) += -rhs;
+}
+Matrix& operator*=(Matrix& lhs, const Matrix& rhs)
+{
+    if (lhs.row != rhs.column) throw Matrix::MULTIPLE_ERRPOR;
+
+    Matrix lhsTemp(lhs);
+    lhs.Reset(lhs.column, rhs.row);
+    cout << lhs << endl << rhs << endl;
+    /*for (int i = 0; i < lhsTemp.column; ++i)
+    {
+        for (int j = 0; j < rhs.row; ++j)
+        {
+            for (int k = 0; k < rhs.column; ++k)
             {
-                this->_matrix[j][k] += multiple * this->_matrix[i][k];
+                cout << "data[" << i << "][" << j << "] += data[" << i << "][" << k << "] * data[" << k << "][" << j << "]" << endl;
+                cout << lhs.data[i][j] << " += " << lhsTemp.data[i][k] << " * " << rhs.data[k][j] << endl;
+                lhs.data[i][j] += lhsTemp.data[i][k] * rhs.data[k][j];
             }
         }
-    }
+    }*/
+    return lhs;
 }
-void Matrix::SolutionByInto()
+Matrix& operator*=(Matrix& m, const int& mul)
 {
-    int sol[COLUMN];
-}
-void Matrix::ReverseGaussianElimination()
-{
-    for (int i = COLUMN; i >= 0; --i)
+    for (int i = 0; i < m.column; ++i)
     {
-        int pivot = this->_matrix[i][i];
-
-        for (int j = i - 1; j >= 0; --j)
+        for (int j = 0; j < m.row; ++j)
         {
-            int multiple = -this->_matrix[j][i] / pivot;
-
-            for (int k = i; k >= 0; --k)
-            {
-                this->_matrix[j][k] += multiple * this->_matrix[i][k];
-            }
+            m.data[i][j] *= mul;
         }
     }
+
+    return m;
+}
+Matrix operator*(const Matrix& lhs, const Matrix& rhs)
+{
+    return Matrix(lhs) *= rhs;
+}
+Matrix operator*(const Matrix& m, const int& mul)
+{
+    return Matrix(m) *= mul;
+}
+Matrix operator*(const int& mul, const Matrix& m)
+{
+    return Matrix(m) *= mul;
+}
+Matrix Matrix::Inverse()
+{
+    Matrix result(this->column, this->row);
+
+    for (int i = 0; i < column; ++i)
+    {
+        for (int j = 0; j < row; ++j)
+        {
+            result.data[i][j] = 1 / this->data[i][j];
+        }
+    }
+
+    return result;
 }
