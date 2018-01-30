@@ -21,7 +21,7 @@ class Matrix
         Matrix& Swap(Matrix&); // ´î¤Ö¨Ï¥Înew
 
         // to destruct
-        //void Clear();
+        void Clear();
         //void Reset(const int&, const int&);
 
         //-------------------------------------------------------------------------
@@ -44,7 +44,7 @@ class Matrix
         template<class T> friend Matrix& operator-=(Matrix&			, const Matrix&);
         template<class T> friend Matrix	 operator- (const Matrix&	, const Matrix&);
         template<class T> friend Matrix& operator*=(Matrix&			, const Matrix&);
-
+        template<class T> friend Matrix	 operator* (const Matrix&	, const Matrix&);
         /* properties */
         int column;
         int row;
@@ -102,11 +102,11 @@ Matrix<T>& Matrix<T>::Copy(const Matrix<T>& m)
     return *this;
 }
 
-//template<class T>
-//void Matrix<T>::Clear()
-//{
-//    this->Swap(Matrix<T>());
-//}
+template<class T>
+void Matrix<T>::Clear()
+{
+    this->Swap(Matrix<T>());
+}
 
 //template<class T>
 //void Matrix<T>::Reset(const int& column, const int& row)
