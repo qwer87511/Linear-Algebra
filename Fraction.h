@@ -35,11 +35,12 @@ class Fraction
 
         // Self arithmetic operators
         Fraction  operator- () const;
-        Fraction  operator! () const; // ­Ë¼Æ
         Fraction& operator++();
         Fraction  operator++(int);
         Fraction& operator--();
         Fraction  operator--(int);
+        Fraction  Inverse() const; // ­Ë¼Æ
+        operator bool() const;
 
         // Comparison operators
         friend bool operator==(const Fraction&, const Fraction&); // Fraction == Fraction

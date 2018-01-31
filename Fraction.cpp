@@ -119,16 +119,16 @@ Fraction operator*(const Fraction& lhs, const Fraction& rhs)
 // operator /=
 Fraction& operator/=(Fraction& lhs, const Fraction& rhs)
 {
-    return lhs *= !rhs;
+    return lhs *= rhs.Inverse();
 }
 // operator /
 Fraction operator/(const Fraction& lhs, const Fraction& rhs)
 {
-    return Fraction(lhs) *= !rhs;
+    return Fraction(lhs) *= rhs.Inverse();
 }
 
 // self operator
-Fraction Fraction::operator!() const // ­Ë¼Æ
+Fraction Fraction::Inverse() const // ­Ë¼Æ
 {
     if (!denominator) throw INVERSE_ERROR;
 
@@ -150,7 +150,7 @@ Fraction Fraction::operator++(int)
 }
 Fraction& Fraction::operator--()
 {
-    return *this += Fraction(-1);
+    return *this += -1;
 }
 Fraction Fraction::operator--(int)
 {
@@ -190,28 +190,20 @@ bool operator>=(const Fraction& lhs, const Fraction& rhs)
 }
 
 // conversion
-int Fraction::ToInt() const
+Fraction::operator bool() const
 {
-    return numerator / denominator;
-}
-double Fraction::ToDouble() const
-{
-    return (double)numerator / (double)denominator;
-}
-string Fraction::ToString() const
-{
-    if (denominator == 1) return to_string(numerator);
-    else return to_string(numerator) + " / " + to_string(denominator);
+    return bool(numerator);
 }
 Fraction::operator int() const
 {
-    return this->ToInt();
+    return numerator / denominator;
 }
 Fraction::operator double() const
 {
-    return this->ToDouble();
+    return (double)numerator / (double)denominator;
 }
 Fraction::operator string() const
 {
-    return this->ToString();
+    if (denominator == 1) return to_string(numerator);
+    else return to_string(numerator) + " / " + to_string(denominator);
 }
