@@ -75,56 +75,59 @@ ostream& operator << (ostream& out, const Fraction& f)
 
 // Arithmetic operators
 // operator +=
-Fraction& operator+=(Fraction& lhs, const Fraction& rhs)
+Fraction& Fraction::operator+=(const Fraction& rhs)
 {
     // 硄だ
-    int lcm = LowestCommonMultiple(lhs.denominator, rhs.denominator); // 程そ计
-    int lhsMult = lcm / lhs.denominator; // オ娩硄だ┮惠计
+    int lcm = LowestCommonMultiple(this->denominator, rhs.denominator); // 程そ计
+    int lhsMult = lcm / this->denominator; // オ娩硄だ┮惠计
     int rhsMult = lcm / rhs.denominator; // 娩硄だ┮惠计
     // 
-    lhs.numerator = lhs.numerator * lhsMult + rhs.numerator * rhsMult;
-    lhs.denominator = lcm;
-    lhs.Reduction();
-    return lhs;
+	this->numerator = this->numerator * lhsMult + rhs.numerator * rhsMult;
+	this->denominator = lcm;
+	this->Reduction();
+    return *this;
 }
-
 // operator +
 Fraction operator+(const Fraction& lhs, const Fraction& rhs)
 {
-    return Fraction(lhs) += rhs;
+	Fraction lhsTemp(lhs);
+	return lhsTemp += rhs;
 }
 // operator -=
-Fraction& operator-=(Fraction& lhs, const Fraction& rhs)
+Fraction& Fraction::operator-=(const Fraction& rhs)
 {
-    return lhs += -rhs;
+    return *this += -rhs;
 }
 // operator -
 Fraction operator-(const Fraction& lhs, const Fraction& rhs)
 {
-    return Fraction(lhs) += -rhs;
+	Fraction lhsTemp(lhs);
+	return lhsTemp += -rhs;
 }
 // operator *=
-Fraction& operator*=(Fraction& lhs, const Fraction& rhs)
+Fraction& Fraction::operator*=(const Fraction& rhs)
 {
-    lhs.numerator *= rhs.numerator;
-    lhs.denominator *= rhs.denominator;
-    lhs.Reduction();
-    return lhs;
+	this->numerator *= rhs.numerator;
+	this->denominator *= rhs.denominator;
+	this->Reduction();
+    return *this;
 }
 // operator *
 Fraction operator*(const Fraction& lhs, const Fraction& rhs)
 {
-    return Fraction(lhs) *= rhs;
+    Fraction lhsTemp(lhs);
+	return lhsTemp *= rhs;
 }
 // operator /=
-Fraction& operator/=(Fraction& lhs, const Fraction& rhs)
+Fraction& Fraction::operator/=(const Fraction& rhs)
 {
-    return lhs *= rhs.Inverse();
+    return *this *= rhs.Inverse();
 }
 // operator /
 Fraction operator/(const Fraction& lhs, const Fraction& rhs)
 {
-    return Fraction(lhs) *= rhs.Inverse();
+	Fraction lhsTemp(lhs);
+	return lhsTemp *= rhs.Inverse();
 }
 
 // self operator
@@ -140,7 +143,7 @@ Fraction Fraction::operator-() const
 }
 Fraction& Fraction::operator++()
 {
-    return *this += Fraction(1);
+    return *this += 1;
 }
 Fraction Fraction::operator++(int)
 {
@@ -150,7 +153,7 @@ Fraction Fraction::operator++(int)
 }
 Fraction& Fraction::operator--()
 {
-    return *this += -1;
+    return *this -= 1;
 }
 Fraction Fraction::operator--(int)
 {

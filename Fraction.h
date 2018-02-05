@@ -23,15 +23,17 @@ class Fraction
         friend istream& operator >> (istream&, Fraction&);
         friend ostream& operator <<	(ostream&, const Fraction&);
 
+
         // Arithmetic operators
-        friend Fraction& operator+=(Fraction&		, const Fraction&); // Fraction += Fraction
-        friend Fraction	 operator+ (const Fraction&	, const Fraction&); // Fraction +  Fraction
-        friend Fraction& operator-=(Fraction&		, const Fraction&);
-        friend Fraction  operator- (const Fraction&	, const Fraction&);
-        friend Fraction& operator*=(Fraction&		, const Fraction&);
-        friend Fraction  operator* (const Fraction&	, const Fraction&);
-        friend Fraction& operator/=(Fraction&		, const Fraction&);
-        friend Fraction  operator/ (const Fraction&	, const Fraction&);
+        Fraction& operator+=(const Fraction&); // Fraction += Fraction
+        Fraction& operator-=(const Fraction&);
+        Fraction& operator*=(const Fraction&);
+        Fraction& operator/=(const Fraction&);
+        
+		friend Fraction	operator+(const Fraction&, const Fraction&); // Fraction + Fraction
+		friend Fraction operator-(const Fraction&, const Fraction&);
+		friend Fraction operator*(const Fraction&, const Fraction&);
+		friend Fraction operator/(const Fraction&, const Fraction&);
 
         // Self arithmetic operators
         Fraction  operator- () const;
@@ -40,7 +42,7 @@ class Fraction
         Fraction& operator--();
         Fraction  operator--(int);
         Fraction  Inverse() const; // ­Ë¼Æ
-        operator bool() const;
+
 
         // Comparison operators
         friend bool operator==(const Fraction&, const Fraction&); // Fraction == Fraction
@@ -51,9 +53,7 @@ class Fraction
         friend bool operator>=(const Fraction&, const Fraction&);
 
         // Cast
-        int ToInt() const;
-        double ToDouble() const;
-        string ToString() const;
+        operator bool() const;
         explicit operator int() const;
         explicit operator double() const;
         explicit operator string() const;
