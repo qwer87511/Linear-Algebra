@@ -10,18 +10,17 @@ class Matrix
         // constructor
         Matrix(const int& = 1, const int& = 1);
         Matrix(const Matrix&);
-        
-		// destructor
+
+        // destructor
         ~Matrix();
 
         // to construct
         Matrix& Copy(const Matrix&);
-        Matrix& Swap(Matrix&); // 把原 區域變數 和 參照引數交換 使之自動解構原參照變數，並且節省回傳時還要再複製一次的效能消耗，而不一一使用new的方法
+        Matrix& Swap(Matrix&); // 把原 區域變數 和 參照引數交換 使之自動解構原參照變數，並且節省回傳時還要再複製一次的效能消耗。
 
         // to destruct
         void Clear();
         //void Reset(const int&, const int&);
-
 
 
         // operator overloading
@@ -56,11 +55,11 @@ template<class T>
 Matrix<T>::Matrix(const int& column, const int& row) :
     column(column),
     row(row),
-    data(new T*[column])
+    data(new T * [column])
 {
     for (int i = 0; i < column; ++i)
     {
-		this->data[i] = new T[row](); // T 需要支援初始參數.
+        this->data[i] = new T[row](); // T 需要支援初始參數.
     }
 }
 
@@ -69,7 +68,7 @@ template<class T>
 Matrix<T>::Matrix(const Matrix<T>& m) :
     column(m.column),
     row(m.row),
-    data(new T*[column])
+    data(new T * [column])
 {
     for (int i = 0; i < column; ++i)
     {
@@ -130,11 +129,11 @@ Matrix<T>& Matrix<T>::Swap(Matrix<T>& rhs)
 template<class T>
 Matrix<T>& Matrix<T>::operator=(const Matrix<T>& m)
 {
-	if (this->column != m.column || this->row != m.row)
-	{
-		Matrix<T> temp(m);
-		return this->Swap(temp);
-	}
+    if (this->column != m.column || this->row != m.row)
+    {
+        Matrix<T> temp(m);
+        return this->Swap(temp);
+    }
     else
         return this->Copy(m);
 }
@@ -164,7 +163,7 @@ ostream& operator << (ostream& out, const Matrix<T>& m)
 
         for (int j = 0; j < m.row; ++j)
         {
-            out <<setw(3)<< m.data[i][j];
+            out << " " << setw(3) << m.data[i][j];
         }
 
         out << setw(3) << "|" << endl;
@@ -245,7 +244,7 @@ Matrix<T>& operator*=(Matrix<T>& lhs, const Matrix<T>& rhs)
             }
         }
     }
-	
+
     lhs.Swap(result);
     return lhs;
 }
@@ -254,7 +253,6 @@ Matrix<T>& operator*=(Matrix<T>& lhs, const Matrix<T>& rhs)
 template<class T>
 Matrix<T> operator*(const Matrix<T>& lhs, const Matrix<T>& rhs)
 {
-
-	Matrix<T> lhsTemp(lhs);
-	return lhsTemp *= rhs;
+    Matrix<T> lhsTemp(lhs);
+    return lhsTemp *= rhs;
 }

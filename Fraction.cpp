@@ -41,16 +41,20 @@ Fraction::Fraction(const int& nNumerator, const int& nDenominator) : numerator(n
 }
 Fraction::Fraction(string input)
 {
-    regex reg("-?[0-9]+(/-?[0-9]+)?");
+    input.erase(remove(input.begin(), input.end(), ' '), input.end()); // 刪除所有空格
 
-    if (!regex_match(input, reg)) throw INIT_STR_ERROR;
+    if (!regex_match(input, regex("-?[0-9]+(/-?[0-9]+)?"))) throw INIT_STR_ERROR;
 
     int cut = input.find('/');
 
     if (cut != string::npos)
-        *this = Fraction(stoi(input.substr(0, cut)), stoi(input.substr(cut + 1, input.size() - cut - 1))); // 含分母
+        *this = Fraction(stoi(input.substr(0, cut)), stoi(input.substr(cut + 1))); // 含分母
     else
         *this = Fraction(stoi(input)); // 整數
+}
+Fraction::Fraction(const char input[])
+{
+    *this = Fraction(string(input));
 }
 void Fraction::Reduction()
 {
@@ -82,16 +86,16 @@ Fraction& Fraction::operator+=(const Fraction& rhs)
     int lhsMult = lcm / this->denominator; // 左邊作通分所需的倍數
     int rhsMult = lcm / rhs.denominator; // 右邊作通分所需的倍數
     // 加
-	this->numerator = this->numerator * lhsMult + rhs.numerator * rhsMult;
-	this->denominator = lcm;
-	this->Reduction();
+    this->numerator = this->numerator * lhsMult + rhs.numerator * rhsMult;
+    this->denominator = lcm;
+    this->Reduction();
     return *this;
 }
 // operator +
 Fraction operator+(const Fraction& lhs, const Fraction& rhs)
 {
-	Fraction lhsTemp(lhs);
-	return lhsTemp += rhs;
+    Fraction lhsTemp(lhs);
+    return lhsTemp += rhs;
 }
 // operator -=
 Fraction& Fraction::operator-=(const Fraction& rhs)
@@ -101,22 +105,22 @@ Fraction& Fraction::operator-=(const Fraction& rhs)
 // operator -
 Fraction operator-(const Fraction& lhs, const Fraction& rhs)
 {
-	Fraction lhsTemp(lhs);
-	return lhsTemp += -rhs;
+    Fraction lhsTemp(lhs);
+    return lhsTemp += -rhs;
 }
 // operator *=
 Fraction& Fraction::operator*=(const Fraction& rhs)
 {
-	this->numerator *= rhs.numerator;
-	this->denominator *= rhs.denominator;
-	this->Reduction();
+    this->numerator *= rhs.numerator;
+    this->denominator *= rhs.denominator;
+    this->Reduction();
     return *this;
 }
 // operator *
 Fraction operator*(const Fraction& lhs, const Fraction& rhs)
 {
     Fraction lhsTemp(lhs);
-	return lhsTemp *= rhs;
+    return lhsTemp *= rhs;
 }
 // operator /=
 Fraction& Fraction::operator/=(const Fraction& rhs)
@@ -126,8 +130,8 @@ Fraction& Fraction::operator/=(const Fraction& rhs)
 // operator /
 Fraction operator/(const Fraction& lhs, const Fraction& rhs)
 {
-	Fraction lhsTemp(lhs);
-	return lhsTemp *= rhs.Inverse();
+    Fraction lhsTemp(lhs);
+    return lhsTemp *= rhs.Inverse();
 }
 
 // self operator

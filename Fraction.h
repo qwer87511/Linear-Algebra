@@ -7,6 +7,7 @@ class Fraction
     public:
         Fraction(const int& = 0, const int& = 1);
         Fraction(string);
+        Fraction(const char[]);
 
         // Exception handling
         enum ERROR_CODE { INIT_INT_ERROR, INIT_STR_ERROR, INVERSE_ERROR };
@@ -29,11 +30,11 @@ class Fraction
         Fraction& operator-=(const Fraction&);
         Fraction& operator*=(const Fraction&);
         Fraction& operator/=(const Fraction&);
-        
-		friend Fraction	operator+(const Fraction&, const Fraction&); // Fraction + Fraction
-		friend Fraction operator-(const Fraction&, const Fraction&);
-		friend Fraction operator*(const Fraction&, const Fraction&);
-		friend Fraction operator/(const Fraction&, const Fraction&);
+
+        friend Fraction	operator+(const Fraction&, const Fraction&); // Fraction + Fraction
+        friend Fraction operator-(const Fraction&, const Fraction&);
+        friend Fraction operator*(const Fraction&, const Fraction&);
+        friend Fraction operator/(const Fraction&, const Fraction&);
 
         // Self arithmetic operators
         Fraction  operator- () const;
