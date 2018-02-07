@@ -36,12 +36,12 @@ class Matrix
         template<class T> friend ostream& operator << (ostream&, const Matrix&);
 
         // operation
-        template<class T> friend Matrix& operator+=(Matrix&			, const Matrix&);
-        template<class T> friend Matrix	 operator+ (const Matrix&	, const Matrix&);
-        template<class T> friend Matrix& operator-=(Matrix&			, const Matrix&);
-        template<class T> friend Matrix	 operator- (const Matrix&	, const Matrix&);
-        template<class T> friend Matrix& operator*=(Matrix&			, const Matrix&);
-        template<class T> friend Matrix	 operator* (const Matrix&	, const Matrix&);
+        Matrix& operator+=(const Matrix&);
+        Matrix& operator-=(const Matrix&);
+        Matrix& operator*=(const Matrix&);
+        template<class T> friend Matrix	operator+(const Matrix&, const Matrix&);
+        template<class T> friend Matrix	operator-(const Matrix&, const Matrix&);
+        template<class T> friend Matrix	operator*(const Matrix&, const Matrix&);
 
 
         // properties
@@ -183,17 +183,54 @@ T* Matrix<T>::operator[](int index)
 
 // Matrix += Matrix
 template<class T>
-Matrix<T>& operator+=(Matrix<T>& lhs, const Matrix<T>& rhs)
+Matrix<T>& Matrix<T>::operator+=(const Matrix<T>& rhs)
 {
     for (int i = 0; i < rhs.column; ++i)
     {
         for (int j = 0; j < rhs.row; ++j)
         {
-            lhs.data[i][j] += rhs.data[i][j];
+            this->data[i][j] += rhs.data[i][j];
         }
     }
 
-    return lhs;
+    return *this;
+}
+// Matrix -= Matrix
+template<class T>
+Matrix<T>& Matrix<T>::operator-=(const Matrix<T>& rhs)
+{
+    for (int i = 0; i < rhs.column; ++i)
+    {
+        for (int j = 0; j < rhs.row; ++j)
+        {
+            this->data[i][j] -= rhs.data[i][j];
+        }
+    }
+
+    return *this;
+}
+// Matrix *= Matrix
+template<class T>
+Matrix<T>& Matrix<T>::operator*=(const Matrix<T>& rhs)
+{
+    if (this->row != rhs.column) throw "MULTIPLE ERROR";
+
+    // if rhs matrix is not square lhs matrix would change the size
+    Matrix<T> result(this->column, rhs.row);
+
+    for (int i = 0; i < this->column; ++i)
+    {
+        for (int j = 0; j < rhs.row; ++j)
+        {
+            for (int k = 0; k < this->row; ++k)
+            {
+                result.data[i][j] += this->data[i][k] * rhs.data[k][j];
+            }
+        }
+    }
+
+    this->Swap(result);
+    return *this;
 }
 
 // Matrix + Matrix
@@ -202,53 +239,12 @@ Matrix<T> operator+(const Matrix<T>& lhs, const Matrix<T>& rhs)
 {
     return Matrix<T>(lhs) += rhs;
 }
-
-// Matrix -= Matrix
-template<class T>
-Matrix<T>& operator-=(Matrix<T>& lhs, const Matrix<T>& rhs)
-{
-    for (int i = 0; i < rhs.column; ++i)
-    {
-        for (int j = 0; j < rhs.row; ++j)
-        {
-            lhs.data[i][j] -= rhs.data[i][j];
-        }
-    }
-
-    return lhs;
-}
-
 // Matrix - Matrix
 template<class T>
 Matrix<T> operator-(const Matrix<T>& lhs, const Matrix<T>& rhs)
 {
     return Matrix<T>(lhs) -= rhs;
 }
-
-// Matrix *= Matrix
-template<class T>
-Matrix<T>& operator*=(Matrix<T>& lhs, const Matrix<T>& rhs)
-{
-    if (lhs.row != rhs.column) throw "MULTIPLE ERROR";
-
-    // if rhs matrix is not square lhs matrix would change the size
-    Matrix<T> result(lhs.column, rhs.row);
-
-    for (int i = 0; i < lhs.column; ++i)
-    {
-        for (int j = 0; j < rhs.row; ++j)
-        {
-            for (int k = 0; k < lhs.row; ++k)
-            {
-                result.data[i][j] += lhs.data[i][k] * rhs.data[k][j];
-            }
-        }
-    }
-
-    lhs.Swap(result);
-    return lhs;
-}
-
 // Matrix * Matrix
 template<class T>
 Matrix<T> operator*(const Matrix<T>& lhs, const Matrix<T>& rhs)
